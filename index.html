@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Replica de amazon aunque se llame ebay xd">
+    <meta name="author" content="Jaime">
+    <link
+        href="https://static.wixstatic.com/media/44f243_6de7ddf55e2d472d98df86de1cee8052~mv2.png/v1/crop/x_42,y_0,w_341,h_426/fill/w_477,h_551,al_c,lg_1,q_85/amazon-logo.webp"
+        rel="icon">
+    <title>Amazon - Cellphone</title>
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/ebay-styles.min.css" rel="stylesheet">
+
+
+
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-analytics.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        var firebaseConfig = {
+            apiKey: "AIzaSyDTylFDx7qZqYUQQ5mqJZJ3qtR0ZyleRko",
+            authDomain: "marca-fpi.firebaseapp.com",
+            databaseURL: "https://marca-fpi-default-rtdb.firebaseio.com",
+            projectId: "marca-fpi",
+            storageBucket: "marca-fpi.appspot.com",
+            messagingSenderId: "104832430142",
+            appId: "1:104832430142:web:ada5e52a95a5b70522216f",
+            measurementId: "G-3E2NTEDD6K"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+    </script>
+</head>
+
+<body id="page-top">
+    <div id="vue-container">
+        <div class="alert alert-success alert-dismissible" role="alert"
+            style="position: absolute;z-index: 3000;float: right;margin: 1rem;" id="alerts">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <h6><i class="fas fa-check"></i><b> Muchas gracias por su compra.</b></h6>
+        </div>
+        <div id="wrapper">
+            <!-- Sidebar -->
+            <ul class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                    <div class="sidebar-brand-icon">
+                        <i class="fab fa-amazon fa-2x"></i>
+                    </div>
+                    <div class="sidebar-brand-text mx-3">mazon</div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <hr class="sidebar-divider">
+                <div class="sidebar-heading">
+                    <div style="display: flex;align-items: center;transform: scale(0.7);"><label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <h5 style="display: inline-block;padding-left: 1rem;">Nuevo</h5>
+                    </div>
+                </div>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrap"
+                        aria-expanded="true" aria-controls="collapseBootstrap">
+                        <i class="far fa-fw fa-window-maximize"></i>
+                        <span>Marcas</span>
+                    </a>
+                    <div id="collapseBootstrap" class="collapse" aria-labelledby="headingBootstrap"
+                        data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <div class="custom-control custom-checkbox" v-for="(marca) in marcas">
+                                <input type="checkbox" class="custom-control-input" :id="marca.nombre"
+                                    v-model="marca.checked"><label class="custom-control-label" :for="marca.nombre"
+                                    v-bind:value="marca.id">{{marca.nombre}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseForm"
+                        aria-expanded="true" aria-controls="collapseForm">
+                        <i class="fab fa-fw fa-wpforms"></i>
+                        <span>Sistema</span>
+                    </a>
+                    <div id="collapseForm" class="collapse" aria-labelledby="headingForm"
+                        data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="Android"
+                                    @click="checkedOS($event.target,'Android')"><label class="custom-control-label"
+                                    for="Android">Android</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="IOS"
+                                    @click="checkedOS($event.target,'IOS')"><label class="custom-control-label"
+                                    for="IOS">IOS</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="Windows"
+                                    @click="checkedOS($event.target,'Windows')"><label class="custom-control-label"
+                                    for="Windows">Windows phone</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="Blackberryphone"
+                                    @click="checkedOS($event.target,'Blackberry')"><label class="custom-control-label"
+                                    for="Blackberryphone">Blackberry</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="Otro"
+                                    @click="checkedOS($event.target,'Otro')"><label class="custom-control-label"
+                                    for="Otro">Otro</label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTable"
+                        aria-expanded="true" aria-controls="collapseTable">
+                        <i class="fas fa-fw fa-table"></i>
+                        <span>Pantalla</span>
+                    </a>
+                    <div id="collapseTable" class="collapse" aria-labelledby="headingTable"
+                        data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="6"><label
+                                    class="custom-control-label" for="6">6.0</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="5"><label
+                                    class="custom-control-label" for="5">5.0</label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseState"
+                        aria-expanded="true" aria-controls="collapseState">
+                        <i class="fas fa-phone"></i>
+                        <span>Estado</span>
+                    </a>
+                    <div id="collapseState" class="collapse" aria-labelledby="headingTable"
+                        data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="Nuevo"
+                                    v-model="estado.Nuevo"><label class="custom-control-label" for="Nuevo">Nuevo</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="Usado"
+                                    v-model="estado.Usado"><label class="custom-control-label" for="Usado">Usado</label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item" style="display: flex;align-self: center;margin-top: 2rem;">
+                    <button type="button" class="btn btn-danger mb-1" @click="removeFilters()" id="quitarFiltros">Quitar
+                        Filtros</button>
+                </li>
+            </ul>
+            <!-- Sidebar -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <div id="content">
+                    <!-- TopBar -->
+                    <nav class="navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top">
+                        <button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">
+                            <i class="fa fa-bars" onclick="clickedCollapse()"></i>
+                        </button>
+                        <ul class="navbar-nav ml-auto">
+                            <li style="align-self: center;"><input type="text" class="form-control" id="buscar"
+                                    aria-describedby="buscador" placeholder="Buscar" v-model="textoBusqueda"></li>
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <i class="fas fa-search fa-fw"></i>
+                                </a>
+                            </li>
+                            <div class="topbar-divider d-none d-sm-block"></div>
+                            <li class="nav-item dropdown no-arrow">
+                                <a data-toggle="modal" href="#plus" class="nav-link dropdown-toggle" href="#"
+                                    id="searchDropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-plus fa-fw"></i>
+                                </a>
+                            </li>
+                            <div class="topbar-divider d-none d-sm-block"></div>
+
+
+                            <li class="nav-item dropdown no-arrow mx-1">
+                                <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-shopping-cart fa-fw"></i>
+                                </a>
+                                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                    aria-labelledby="alertsDropdown">
+                                    <h6 class="dropdown-header">
+                                        Carrito de compras
+                                    </h6>
+                                    <a class="dropdown-item d-flex align-items-center" href="#"
+                                        v-for="(item) in carrito" v-if="carrito.length>0" @click="anuncioSel=item"
+                                        v-on:dblclick="showModal = true">
+                                        <div class="mr-3">
+                                            <div class="icon-circle bg-success" style="overflow: hidden;">
+                                                <img :src="item.fotos[0]" :alt="item.titulo" style="width:inherit">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            {{item.titulo}}
+                                            <div class="small text-gray-500">${{item.precio}}</div>
+                                        </div>
+                                    </a>
+
+                                    <a class="dropdown-item d-flex align-items-center" href="#"
+                                        v-if="carrito.length==0">
+                                        <div>
+                                            Todavía no has agregado nada.
+                                        </div>
+                                    </a>
+
+                                    <a class="dropdown-item text-center small text-gray-500" href="#"
+                                        v-if="carrito.length>0" @click="alert()">Proceder a pagar ${{total()}}</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                    <!-- Topbar -->
+
+                    <!---Cuerpo principal de pagina INICIO-->
+                    <div class="container-fluid" id="container-wrapper">
+                        <div class="row mb-3">
+                            <div class="div-superior">
+                                <div class="div-rangos">
+                                    <nobr>
+                                        <label for="startPrice">Desde</label>
+                                        <input type="text" class="form-control" id="startPrice" placeholder="$"
+                                            style="width: 20%;display: inline-block;padding: 0.5rem;">
+                                        <label for="finalPrice">Hasta</label>
+                                        <input type="text" class="form-control" id="finalPrice" placeholder="$"
+                                            style="width: 20%;display: inline-block;padding: 0.5rem;">
+                                    </nobr>
+                                </div>
+                                <div class="div-rangos">
+                                    <nobr>
+                                        <label for="none">Ordenar por:</label>
+                                        <button type="submit" class="btn btn-primary">Precio</button>
+                                        <button type="submit" class="btn btn-primary">Fecha</button>
+                                    </nobr>
+                                </div>
+                            </div>
+
+                            <!-- Anuncios listados -->
+                            <div class="col-xl-3 col-md-6 mb-4" v-for="(anuncio,index) in anuncios"
+                                style="padding-bottom: 0%;" v-show="filtrosAnuncios(anuncio, index)"
+                                @click="anuncioSel=anuncio" v-on:dblclick="showModal = true">
+                                <div class="card h-100" style="cursor: pointer;">
+                                    <div class="card-body" style="display: flex;">
+                                        <div class="row align-items-center" style="width: 100%;">
+                                            <div class="col-auto anuncio-parent">
+                                                <img :src="anuncio.fotos[0]" class="card-img-top anuncios-img"
+                                                    :alt="anuncio.titulo">
+                                            </div>
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                                    {{anuncio.titulo}}</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">${{anuncio.precio}}
+                                                </div>
+                                                <div class="mt-2 mb-0 text-muted text-xs">
+                                                    <span class="text-success mr-2">RAM {{anuncio.ram}}</span>
+                                                    <span>ROM {{anuncio.ram}}</span>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col mr-2 anuncio-sub">
+                                        <div class="text-xs font-weight-bold text-uppercase mb-1">Vendedor:
+                                            {{anuncio.nombreVendedor}}</div>
+                                        <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                            Publicado
+                                            {{
+                                                diffDays(anuncio.fecha)
+                                            }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Anuncio listado FIN-->
+
+                            <!-- Paginador bottom -->
+                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate"
+                                style="width: 100%;display: flex;justify-content: center;justify-content: space-around;">
+                                <ul class="pagination">
+                                    <li class="paginate_button page-item previous" id="dataTable_previous">
+                                        <a href="#" @click="activePage--" class="page-link" v-if="activePage!=1" @click="activePage--">Anterior</a>
+                                    </li>
+
+                                    <li class="paginate_button page-item" v-for="(page) in pages" :class="{active: activePage===page}">
+                                        <a href="#" aria-controls="dataTable" data-dt-idx="1" tabindex="0"
+                                            class="page-link" @click="activePage=page">{{page}}</a>
+                                    </li>
+
+                                    <li class="paginate_button page-item next" id="dataTable_next" v-if="activePage < pages.length">
+                                        <a href="#" class="page-link" @click="activePage++">Siguiente</a>
+                                    </li>
+                                </ul>
+                                <select class="form-control mb-3" style="width: fit-content;" v-model="pagination" @change="setPages()">
+                                    <option value="4">4</option>
+                                    <option value="8">8</option>
+                                    <option value="12">12</option>
+                                    <option value="16">16</option>
+                                    <option value="20">20</option>
+                                    <option value="24">24</option>
+                                </select>
+                            </div>
+                            <!-- Paginador bottom FIN -->
+
+                            <!-- Footer -->
+                            <div class="footer-page">Desarrollado por: <strong>Jaime Navas</strong>.</div>
+                            <!-- Footer FIN -->
+
+                        </div>
+                        <!---Cuerpo principal de pagina FIN-->
+                    </div>
+                </div>
+
+            </div>
+            <!-- Scroll to top -->
+            <a class="scroll-to-top rounded" href="#page-top">
+                <i class="fas fa-angle-up"></i>
+            </a>
+            <!-- ------------------------------------------------------- Inicio de modales -------------------------------------------------------  -->
+            <div v-if="showModal">
+                <transition name="modal">
+                    <div class="modal-mask modal-fullscreen">
+                        <div class="modal-wrapper">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Detalles del anuncio</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" @click="showModal = false">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" style="background-color: #eff2f0;">
+                                        <div class="card m-3"
+                                            style="flex-direction: unset;place-content: space-evenly;">
+                                            <div id="carouselExampleIndicators" class="carousel slide m-2"
+                                                data-ride="carousel" style="display: inline-block;width: 40%;">
+                                                <div class="carousel-inner">
+                                                    <div class="carousel-item detAnuncioParent"
+                                                        v-for="(img,index) in anuncioSel.fotos"
+                                                        :class="{'active': index === 0}">
+                                                        <img class="d-block w-100 detalleAnuncio" :src="img"
+                                                            :alt="index">
+                                                    </div>
+                                                </div>
+                                                <a class="carousel-control-prev" href="#carouselExampleIndicators"
+                                                    role="button" data-slide="prev" v-show="anuncioSel.fotos.length!=1">
+                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                    <span class="sr-only">Previous</span>
+                                                </a>
+                                                <a class="carousel-control-next" href="#carouselExampleIndicators"
+                                                    role="button" data-slide="next" v-show="anuncioSel.fotos.length!=1">
+                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                    <span class="sr-only">Next</span>
+                                                </a>
+                                            </div>
+                                            <div
+                                                style="display: inline-block;margin-left: 2rem;text-align: center;align-self: center;">
+                                                <h5 style="font-weight: bold;">{{anuncioSel.titulo}}</h5>
+                                                <h1 style="font-weight: bold;">${{anuncioSel.precio}}</h1>
+                                                <a href="#" class="btn btn-primary btn-icon-split"
+                                                    @click="agregarAlCarro(anuncioSel)">
+                                                    <span class="icon text-white-50">
+                                                        <i class="fas fa-shopping-cart"></i>
+                                                    </span>
+                                                    <span class="text">Agregar al carrito</span>
+                                                </a>
+                                                <div
+                                                    style="border: solid;border-radius: 0.35rem;padding: 1rem;margin: 1rem 0;font-family: monospace;">
+                                                    <b>Vendedor:</b> {{anuncioSel.nombreVendedor}}
+                                                    <b>Teléfono:</b> {{anuncioSel.telVendedor}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h1 style="text-align: center;">Descripción</h1>
+                                        <div style="display: flex;justify-content: space-between;">
+                                            <div class="card m-2"
+                                                style="width: 50%;display: inline-block;padding: 1rem;">
+                                                <b>Estado:</b> {{anuncioSel.estado}} <br>
+                                                <b>Marca:</b> {{marcaWithID(anuncioSel.id_modelo)}} <br>
+                                                <b>Modelo:</b> {{modeloWithID(anuncioSel.id_modelo)}} <br>
+                                                <b>Pantalla:</b> {{anuncioSel.Screen_size}} <br>
+                                                <b>Sistema:</b> {{anuncioSel.sistema}} <br>
+                                                <b>ROM:</b> {{anuncioSel.rom}} <br>
+                                                <b>RAM:</b> {{anuncioSel.ram}} <br>
+
+                                            </div>
+                                            <div class="card m-2"
+                                                style="width: 50%;display: inline-block;padding: 1rem;">
+                                                {{anuncioSel.descripcion}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            @click="showModal = false">Cerrar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+            <!-- Inicio del modal ver anuncios completos -->
+
+            <!-- modal plus start-->
+            <div class="modal fade" id="plus" tabindex="-1" role="dialog" aria-labelledby="plus" aria-modal="true"
+                style="display: none;">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="plusTittle">Crear nuevo anuncio</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- pasos horizontales de modal agregar nuevo anuncio -->
+                            <div class="md-stepper-horizontal orange">
+                                <div class="md-step" v-bind:class="{active:pasoModal===1}" @click="pasoModal=1">
+                                    <div class="md-step-circle"><span>1</span></div>
+                                    <div class="md-step-title">Vendedor</div>
+                                    <div class="md-step-bar-left"></div>
+                                    <div class="md-step-bar-right"></div>
+                                </div>
+                                <div class="md-step" v-bind:class="{active:pasoModal===2}" @click="pasoModal=2">
+                                    <div class="md-step-circle"><span>2</span></div>
+                                    <div class="md-step-title">Celular</div>
+                                    <div class="md-step-bar-left"></div>
+                                    <div class="md-step-bar-right"></div>
+                                </div>
+                            </div>
+                            <!-- fin de pasos horizontales de modal agregar nuevo anuncio -->
+                            <!-- inicio de info del vendedor -->
+                            <div v-bind:class="{hide:pasoModal===2}">
+                                <div class="form-group">
+                                    <label for="name">Nombre:</label>
+                                    <input type="text" class="form-control" id="name" v-model="anuncio.nombreVendedor">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tel">Teléfono:</label>
+                                    <input type="text" class="form-control" id="tel" v-model="anuncio.telVendedor">
+                                </div>
+                            </div>
+                            <!-- fin de info del vendedor -->
+
+
+
+                            <!-- Descripción start-->
+                            <form v-bind:class="{hide:pasoModal===1}">
+                                <div class="form-group">
+                                    <label for="tittle">Título del anuncio:</label>
+                                    <input type="text" class="form-control" id="tittle" v-model="anuncio.titulo">
+                                </div>
+                                Marca:
+                                <div class="plus-sign" data-toggle="modal" data-target="#addMarca">+</div>
+                                <div class="trash plus-sign" data-toggle="modal" data-target="#deleteMarca"
+                                    v-show="marcaSel!=''"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                                <select v-model="marcaSel" class="form-control mb-3" id="marcasValue"
+                                    @change="modeloSel = ''">
+                                    <option v-for="(marca) in marcas" v-bind:value="marca">{{marca.nombre}}</option>
+                                </select>
+                                Modelo:
+                                <div class="plus-sign" data-toggle="modal" data-target="#addModelo"
+                                    v-show="marcaSel!=''">+</div>
+                                <div class="trash plus-sign" data-toggle="modal" data-target="#deleteModelo"
+                                    v-show="modeloSel!=''"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                                <select v-model="modeloSel" class="form-control mb-3" id="modeloValue">
+                                    <option v-for="(modelo) in modelos" v-show="modelo.id_marca === marcaSel.id"
+                                        v-bind:value="modelo">{{modelo.nombre_modelo}}</option>
+                                </select>
+                                <div class="form-group">
+                                    <label>Estado:</label>
+                                    <div class="custom-control custom-radio inline-display">
+                                        <input type="radio" id="customRadio3" name="customRadio" value="Nuevo"
+                                            class="custom-control-input" v-model="anuncio.estado">
+                                        <label class="custom-control-label" for="customRadio3">Nuevo</label>
+                                    </div>
+                                    <div class="custom-control custom-radio inline-display">
+                                        <input type="radio" id="customRadio4" name="customRadio"
+                                            class="custom-control-input" v-model="anuncio.estado" value="Usado">
+                                        <label class="custom-control-label" for="customRadio4">Usado</label>
+                                    </div>
+                                </div>
+                                <div style="display: flex;justify-content: space-between;">
+                                    <div class="form-group inline-display">
+                                        <label for="ram">RAM:</label>
+                                        <input type="number" class="ram-rom" id="ram" aria-describedby="ram"
+                                            placeholder="en GB" v-model="anuncio.ram" min="0">
+                                    </div>
+                                    <div class="form-group inline-display">
+                                        <label for="rom">ROM:</label>
+                                        <input type="number" class="ram-rom" id="rom" aria-describedby="rom"
+                                            placeholder="en GB" v-model="anuncio.rom" min="0">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sizeScreen">Tamaño de pantalla:</label>
+                                    <input type="number" class="form-control" id="sizeScreen" placeholder="En pulgadas"
+                                        min="0" max="10" v-model="anuncio.Screen_size">
+                                </div>
+                                Sistema Operativo:
+                                <select v-model="anuncio.sistema" class="form-control mb-3" id="so">
+                                    <option v-for="(sis) in so" v-bind:value="sis">{{sis}}</option>
+                                </select>
+                                Compañia Celular:
+                                <select class="form-control mb-3" id="compania" v-model="anuncio.compania_tel">
+                                    <option value="Tigo">Tigo</option>
+                                    <option value="Claro">Claro</option>
+                                    <option value="Movistar">Movistar</option>
+                                    <option value="Digicel">Digicel</option>
+                                    <option value="Extrangera">Extrangera</option>
+                                    <option value="Liberado">Liberado</option>
+                                    <option value="Bloqueado">Bloqueado</option>
+                                    <option value="Otra">Otra</option>
+                                </select>
+                                <div class="form-group">
+                                    <label for="exampleFormControlTextarea1">Descripción</label>
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"
+                                        v-model="anuncio.descripcion"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Precio:</label>
+                                    <input type="number" class="form-control" id="exampleInputPassword1"
+                                        placeholder="$USD" v-model="anuncio.precio" min="0">
+                                </div>
+                                <div class="file-upload form-group">
+                                    <button class="file-upload-btn" type="button"
+                                        @click="$('.file-upload-input').trigger( 'click' )">Agregar Imagenes</button>
+                                    <div class="image-upload-wrap" v-show="fotoFiles.length === 0">
+                                        <input class="file-upload-input" type='file' @change="readURL" multiple />
+                                        <div class="drag-text">
+                                            <h3>Arrastra las imagenes acá o selecciona "Agregar Imagenes"</h3>
+                                        </div>
+                                    </div>
+                                    <div class="file-upload-content" v-show="fotoFiles.length != 0"
+                                        v-for="(imagen) in fotoTmp">
+                                        <img class="file-upload-image" :src="imagen.url" />
+                                        <div class="image-title-wrap">
+                                            <button type="button" @click="removeUpload(imagen)"
+                                                class="remove-image">Quitar
+                                                {{imagen===undefined?"Imagen Subida":imagen.name}}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- Descreipción end-->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-outline-warning" v-bind:class="{hide : pasoModal=== 1}"
+                                @click="pasoModal--">Anterior</button>
+                            <button type="button" class="btn btn-primary" v-bind:class="{hide : pasoModal=== 2}"
+                                @click="pasoModal++">Siguiente</button>
+                            <button type="button" class="btn btn-primary" v-bind:class="{hide : pasoModal===1}"
+                                @click="agregarNuevoAnuncio()" data-dismiss="modal">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modal plus end -->
+
+            <!-- modal add marca start -->
+            <div class="modal fade" id="addMarca" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Agregar Marca</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Nombre de la Marca</label>
+                                <input type="text" class="form-control" id="newMarca" v-model="nuevaMarca"
+                                    placeholder="Nombre">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                @click="agregarNuevaMarca()">Agregar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modal add marca end -->
+
+            <!-- modal delete marca start -->
+            <div class="modal fade" id="deleteMarca" tabindex="-1" role="dialog" aria-labelledby="Eliminar Marca"
+                aria-hidden="true" data-backdrop="static" style="z-index: 1060 ">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Eliminar Marca</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">¿Está seguro de querer eliminar la Marca:
+                                    "{{marcaSel.nombre}}"?</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal"
+                                @click="eliminarMarca()">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modal delete marca end -->
+
+            <!-- modal add modelo start -->
+            <div class="modal fade" id="addModelo" tabindex="-1" role="dialog" aria-labelledby="modelo"
+                aria-hidden="true" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Agregar Modelo</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="newModel">Nombre del modelo</label>
+                                <input type="text" class="form-control" id="newModel" v-model="newModeloNom"
+                                    placeholder="Nombre">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                @click="agregarNuevoModelo()">Agregar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modal add modelo end -->
+
+            <!-- modal delete modelo start -->
+            <div class="modal fade" id="deleteModelo" tabindex="-1" role="dialog" aria-labelledby="Eliminar modelo"
+                aria-hidden="true" data-backdrop="static" style="z-index: 1060 ">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Eliminar Modelo</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">¿Está seguro de querer eliminar el modelo:
+                                    "{{modeloSel.nombre_modelo}}"?</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal"
+                                @click="eliminarModelo()">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modal delete modelo end -->
+
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+        <script src="js/ebay-scrips.min.js"></script>
+        <script src="js/app.js"></script>
+</body>
+
+</html>
